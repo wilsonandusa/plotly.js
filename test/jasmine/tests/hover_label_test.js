@@ -362,7 +362,6 @@ describe('hover info', function() {
         });
 
         it('render only non-hoverinfo \'none\' hover labels', function(done) {
-
             Plotly.restyle(gd, 'hoverinfo', ['none', 'name']).then(function() {
                 Fx.hover('graph', evt, 'xy');
 
@@ -385,7 +384,31 @@ describe('hover info', function() {
 
                 done();
             });
+        });
 
+        it('render below trace hover labels if -hoverinfo \'none\' in top', function(done) {
+            Plotly.restyle(gd, 'hoverinfo', ['name', 'none']).then(function() {
+                Fx.hover('graph', evt, 'xy');
+
+                expect(gd._hoverdata.length).toEqual(1);
+
+                var hoverTrace = gd._hoverdata[0];
+
+                expect(hoverTrace.fullData.index).toEqual(0);
+                expect(hoverTrace.curveNumber).toEqual(0);
+                expect(hoverTrace.pointNumber).toEqual(16);
+                expect(hoverTrace.x).toEqual(0.33);
+                expect(hoverTrace.y).toEqual(1.25);
+
+                expect(d3.selectAll('g.axistext').size()).toEqual(0);
+                expect(d3.selectAll('g.hovertext').size()).toEqual(1);
+
+                var text = d3.selectAll('g.hovertext').select('text');
+                expect(text.size()).toEqual(1);
+                expect(text.html()).toEqual('PV learning ...');
+
+                done();
+            });
         });
     });
 

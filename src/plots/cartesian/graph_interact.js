@@ -640,7 +640,16 @@ fx.getClosest = function(cd, distfn, pointData) {
         // to create pre-sorted data (by x or y), not sure how to
         // do this for 'closest'
         for(var i = 0; i < cd.length; i++) {
-            var newDistance = distfn(cd[i]);
+            var newDistance = distfn(cd[i]),
+                oldDistance = pointData.distance,
+                hoverinfo = cd[0].trace.hoverinfo;
+
+            // skip over superimposed traces with hoverinfo 'none',
+            // so that the 'below' trace is shown in label
+            if((newDistance === oldDistance) && (hoverinfo === 'none')) {
+                continue;
+            }
+
             if(newDistance <= pointData.distance) {
                 pointData.index = i;
                 pointData.distance = newDistance;
