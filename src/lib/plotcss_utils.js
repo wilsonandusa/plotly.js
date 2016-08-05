@@ -16,7 +16,7 @@ var plotcss = require('../../build/plotcss');
 exports.injectStyles = function injectStyles(gd) {
 
     // If the graph div has already been styled, bail
-    if(gd._plotCSSLoaded) return;
+    if(gd._document._plotCSSLoaded) return;
 
     var targetStyleSheet = null;
 
@@ -45,7 +45,7 @@ exports.injectStyles = function injectStyles(gd) {
         else loggers.warn('injectStyles failed');
     }
 
-    gd._plotCSSLoaded = true;
+    gd._document._plotCSSLoaded = true;
 };
 
 // expands a plotcss selector
