@@ -14,14 +14,15 @@ var plotcss = require('../../build/plotcss');
 
 // Inject styling information into the document containing the graph div
 exports.injectStyles = function injectStyles(gd) {
+
     // If the graph div has already been styled, bail
     if(gd._plotCSSLoaded) return;
 
-    var targetSelectors = exports.getAllRuleSelectors(gd._document);
     var targetStyleSheet = null;
 
     if(gd._document.getElementsByTagName('style').length === 0) {
         var style = gd._document.createElement('style');
+
         // WebKit hack :(
         style.appendChild(gd._document.createTextNode(''));
         gd._document.head.appendChild(style);
@@ -35,14 +36,11 @@ exports.injectStyles = function injectStyles(gd) {
     for(var selector in plotcss) {
         var fullSelector = exports.buildFullSelector(selector);
 
-        // Don't duplicate selectors
-        if(targetSelectors.indexOf(fullSelector) === -1) {
-            if(targetStyleSheet.insertRule) {
-                targetStyleSheet.insertRule(fullSelector + '{' + plotcss[selector] + '}', 0);
-            }
-            else if(targetStyleSheet.addRule) {
-                targetStyleSheet.addRule(fullSelector, plotcss[selector], 0);
-            }
+        if(targetStyleSheet.insertRule) {
+            targetStyleSheet.insertRule(fullSelector + '{' + plotcss[selector] + '}', 0);
+        }
+        else if(targetStyleSheet.addRule) {
+            targetStyleSheet.addRule(fullSelector, plotcss[selector], 0);
         }
         else loggers.warn('injectStyles failed');
     }
@@ -59,23 +57,4 @@ exports.buildFullSelector = function buildFullSelector(selector) {
         .replace(/Y/g, '.plotly-notifier');
 
     return fullSelector;
-};
-
-// Gets all the rules currently attached to the document
-exports.getAllRuleSelectors = function getAllRuleSelectors(sourceDocument) {
-    var allSelectors = [];
-
-    for(var i = 0; i < sourceDocument.styleSheets.length; i++) {
-        var styleSheet = sourceDocument.styleSheets[i];
-
-        if(!styleSheet.cssRules) continue; // It's possible for rules to be undefined
-
-        for(var j = 0; j < styleSheet.cssRules.length; j++) {
-            var cssRule = styleSheet.cssRules[j];
-
-            allSelectors.push(cssRule.selectorText);
-        }
-    }
-
-    return allSelectors;
 };
