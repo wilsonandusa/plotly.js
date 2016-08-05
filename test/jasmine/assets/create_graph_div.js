@@ -1,9 +1,11 @@
 'use strict';
 
-module.exports = function createGraphDiv() {
-    var gd = document.createElement('div');
+module.exports = function createGraphDiv(_document) {
+    _document = _document || window.document;
+
+    var gd = _document.createElement('div');
     gd.id = 'graph';
-    document.body.appendChild(gd);
+    _document.body.appendChild(gd);
 
     // force the graph to be at position 0,0 no matter what
     gd.style.position = 'fixed';
