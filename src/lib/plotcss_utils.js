@@ -9,7 +9,7 @@
 
 'use strict';
 
-var lib = require('./index');
+var loggers = require('./loggers');
 var plotcss = require('../../build/plotcss');
 
 // Inject styling information into the document containing the graph div
@@ -43,8 +43,8 @@ exports.injectStyles = function injectStyles(gd) {
             else if(targetStyleSheet.addRule) {
                 targetStyleSheet.addRule(fullSelector, plotcss[selector], 0);
             }
-            else lib.warn('injectStyles failed');
         }
+        else loggers.warn('injectStyles failed');
     }
 
     gd._plotCSSLoaded = true;
