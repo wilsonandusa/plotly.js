@@ -100,7 +100,23 @@ module.exports = function transitionAxes(gd, newLayout, transitionOpts, makeOnCo
     var updatedAxisIds = Object.keys(updates);
     var affectedSubplots = computeAffectedSubplots(fullLayout, updatedAxisIds, updates);
 
+    function updateLayoutObjs () {
+        function redrawObjs(objArray, method) {
+            var i;
+            for(i = 0; i < objArray.length; i++) {
+                var obji = objArray[i];
+
+                method(gd, i);
+            }
+        }
+
+        redrawObjs(fullLayout.annotations || [], Registry.getComponentMethod('annotations', 'drawOne'));
+        redrawObjs(fullLayout.shapes || [], Registry.getComponentMethod('shapes', 'drawOne'));
+        redrawObjs(fullLayout.images || [], Registry.getComponentMethod('images', 'draw'));
+    }
+
     if(!affectedSubplots.length) {
+        updateLayoutObjs();
         return false;
     }
 
@@ -195,7 +211,6 @@ module.exports = function transitionAxes(gd, newLayout, transitionOpts, makeOnCo
         }
 
         ticksAndAnnotations(subplot.xaxis, subplot.yaxis);
-
 
         var xa2 = subplot.xaxis;
         var ya2 = subplot.yaxis;
