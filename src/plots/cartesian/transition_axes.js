@@ -100,12 +100,10 @@ module.exports = function transitionAxes(gd, newLayout, transitionOpts, makeOnCo
     var updatedAxisIds = Object.keys(updates);
     var affectedSubplots = computeAffectedSubplots(fullLayout, updatedAxisIds, updates);
 
-    function updateLayoutObjs () {
+    function updateLayoutObjs() {
         function redrawObjs(objArray, method) {
             var i;
             for(i = 0; i < objArray.length; i++) {
-                var obji = objArray[i];
-
                 method(gd, i);
             }
         }
