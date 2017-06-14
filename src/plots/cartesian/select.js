@@ -11,6 +11,7 @@
 
 var polygon = require('../../lib/polygon');
 var color = require('../../components/color');
+var appendArrayPointValue = require('../../components/fx/helpers').appendArrayPointValue;
 
 var axes = require('./axes');
 var constants = require('./constants');
@@ -196,3 +197,7 @@ module.exports = function prepSelect(e, startX, startY, dragOptions, mode) {
         }
     };
 };
+
+function makePointData(selection) {
+    // appendArrayPointValue()
+}
