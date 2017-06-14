@@ -25,12 +25,12 @@ var formatColor = require('../../lib/gl_format_color');
 var subTypes = require('../scatter/subtypes');
 var makeBubbleSizeFn = require('../scatter/make_bubble_size_func');
 var getTraceColor = require('../scatter/get_trace_color');
-var MARKER_SYMBOLS = require('../../constants/gl_markers');
+var MARKER_SYMBOLS = require('../../constants/gl2d_markers');
 var DASHES = require('../../constants/gl2d_dashes');
 
 var AXES = ['xaxis', 'yaxis'];
 var DESELECTDIM = 0.2;
-
+var transparent = [0, 0, 0, 0];
 
 function LineWithMarkers(scene, uid) {
     this.scene = scene;
@@ -218,7 +218,7 @@ function _convertArray(convert, data, count) {
 var convertNumber = convertArray.bind(null, function(x) { return +x; });
 var convertColorBase = convertArray.bind(null, str2RGBArray);
 var convertSymbol = convertArray.bind(null, function(x) {
-    return MARKER_SYMBOLS[x] || '●';
+    return MARKER_SYMBOLS[x] ? x : 'circle';
 });
 
 function convertColor(color, opacity, count) {
@@ -253,6 +253,19 @@ function _convertColor(colors, opacities, count) {
     }
 
     return result;
+}
+
+function isSymbolOpen(symbol) {
+    return symbol.split('-open')[1] === '';
+}
+
+function fillColor(colorIn, colorOut, offsetIn, offsetOut, isDimmed) {
+    var dim = isDimmed ? DESELECTDIM : 1;
+
+    for(var j = 0; j < 3; j++) {
+        colorIn[4 * offsetIn + j] = colorOut[4 * offsetOut + j];
+    }
+    colorIn[4 * offsetIn + j] = dim * colorOut[4 * offsetOut + j];
 }
 
 proto.update = function(options, cdscatter) {
@@ -507,7 +520,7 @@ proto.updateFancy = function(options) {
     var getX = (xaxis.type === 'log') ? xaxis.d2l : function(x) { return x; };
     var getY = (yaxis.type === 'log') ? yaxis.d2l : function(y) { return y; };
 
-    var i, j, xx, yy, ex0, ex1, ey0, ey1;
+    var i, xx, yy, ex0, ex1, ey0, ey1;
 
     for(i = 0; i < len; ++i) {
         this.xData[i] = xx = getX(x[i]);
@@ -564,33 +577,57 @@ proto.updateFancy = function(options) {
         this.scatter.options.colors = new Array(pId * 4);
         this.scatter.options.borderColors = new Array(pId * 4);
 
-        var markerSizeFunc = makeBubbleSizeFn(options),
-            markerOpts = options.marker,
-            markerOpacity = markerOpts.opacity,
-            traceOpacity = options.opacity,
-            colors = convertColorScale(markerOpts, markerOpacity, traceOpacity, len),
-            glyphs = convertSymbol(markerOpts.symbol, len),
-            borderWidths = convertNumber(markerOpts.line.width, len),
-            borderColors = convertColorScale(markerOpts.line, markerOpacity, traceOpacity, len),
-            index;
+        var markerSizeFunc = makeBubbleSizeFn(options);
+        var markerOpts = options.marker;
+        var markerOpacity = markerOpts.opacity;
+        var traceOpacity = options.opacity;
+        var symbols = convertSymbol(markerOpts.symbol, len);
+        var colors = convertColorScale(markerOpts, markerOpacity, traceOpacity, len);
+        var borderWidths = convertNumber(markerOpts.line.width, len);
+        var borderColors = convertColorScale(markerOpts.line, markerOpacity, traceOpacity, len);
+        var index, symbol, symbolSpec, _colors, _borderColors, bwFactor, isOpen, isDimmed;
 
         sizes = convertArray(markerSizeFunc, markerOpts.size, len);
 
         for(i = 0; i < pId; ++i) {
             index = idToIndex[i];
+            symbol = symbols[index];
+            symbolSpec = MARKER_SYMBOLS[symbol];
+            isOpen = isSymbolOpen(symbol);
+            isDimmed = selIds && !selIds[index];
+
+            if(symbolSpec.noBorder && !isOpen) {
+                _colors = borderColors;
+            } else {
+                _colors = colors;
+            }
+
+            if(isOpen) {
+                _borderColors = colors;
+            } else {
+                _borderColors = borderColors;
+            }
+
+            if(symbolSpec.bwFactor) {
+                bwFactor = symbolSpec.bwFactor;
+            } else if(symbolSpec.noBorder) {
+                bwFactor = 0.25;
+            } else if(symbolSpec.noFill) {
+                bwFactor = 0.1;
+            } else {
+                bwFactor = 0.5;
+            }
 
             this.scatter.options.sizes[i] = 4.0 * sizes[index];
-            this.scatter.options.glyphs[i] = glyphs[index];
-            this.scatter.options.borderWidths[i] = 0.5 * borderWidths[index];
+            this.scatter.options.glyphs[i] = symbolSpec.unicode;
+            this.scatter.options.borderWidths[i] = bwFactor * borderWidths[index];
 
-            for(j = 0; j < 4; ++j) {
-                var color = colors[4 * index + j];
-                if(selIds && !selIds[index] && j === 3) {
-                    color *= DESELECTDIM;
-                }
-                this.scatter.options.colors[4 * i + j] = color;
-                this.scatter.options.borderColors[4 * i + j] = borderColors[4 * index + j];
+            if(isOpen && !symbolSpec.noBorder && !symbolSpec.noFill) {
+                fillColor(this.scatter.options.colors, transparent, i, 0);
+            } else {
+                fillColor(this.scatter.options.colors, _colors, i, index, isDimmed);
             }
+            fillColor(this.scatter.options.borderColors, _borderColors, i, index, isDimmed);
         }
 
         // prevent scatter from resnapping points
