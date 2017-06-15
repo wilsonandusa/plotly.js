@@ -501,13 +501,13 @@ fdescribe('Test gl2d lasso/select:', function() {
     function countGlObjects() {
         var scene2d = gd._fullLayout._plots.xy._scene2d || {};
         var glplot = scene2d || {};
-        var objects = glplot.objects || []
+        var objects = glplot.objects || [];
         return objects.length;
     }
 
     fit('try', function(done) {
         var _mock = Lib.extendDeep({}, mockFast);
-        _mock.layout.dragmode = 'select';
+//         _mock.layout.dragmode = 'select';
         gd = createGraphDiv();
 
         Plotly.plot(gd, _mock)
