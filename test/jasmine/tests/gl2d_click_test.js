@@ -445,7 +445,7 @@ describe('Test hover and click interactions', function() {
     });
 });
 
-fdescribe('Test gl2d lasso/select:', function() {
+describe('@noCI Test gl2d lasso/select:', function() {
     var mockFancy = Lib.extendDeep({}, mock1);
     var mockFast = Lib.extendDeep({}, mock1, {
         data: [{mode: 'markers'}],
@@ -505,7 +505,7 @@ fdescribe('Test gl2d lasso/select:', function() {
         return objects.length;
     }
 
-    fit('try', function(done) {
+    it('try', function(done) {
         var _mock = Lib.extendDeep({}, mock1);
 //         _mock.layout.dragmode = 'select';
         gd = createGraphDiv();
@@ -519,7 +519,7 @@ fdescribe('Test gl2d lasso/select:', function() {
         .then(done);
     });
 
-    fit('try', function(done) {
+    it('try', function(done) {
         var _mock = Lib.extendDeep({}, mockFancy);
 //         _mock.layout.dragmode = 'select';
         gd = createGraphDiv();
