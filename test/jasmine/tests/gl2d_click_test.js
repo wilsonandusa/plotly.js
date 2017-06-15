@@ -517,7 +517,7 @@ describe('Test gl2d lasso/select:', function() {
         return objects.length;
     }
 
-    it('try', function(done) {
+    fit('try', function(done) {
         var _mock = Lib.extendDeep({}, mockDummy);
 //         _mock.layout.dragmode = 'select';
         gd = createGraphDiv();
@@ -531,7 +531,7 @@ describe('Test gl2d lasso/select:', function() {
         .then(done);
     });
 
-    it('try', function(done) {
+    fit('try', function(done) {
         var _mock = Lib.extendDeep({}, mockDummy);
         _mock.layout.dragmode = 'select';
         gd = createGraphDiv();
