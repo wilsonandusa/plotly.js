@@ -447,13 +447,25 @@ describe('Test hover and click interactions', function() {
 
 describe('Test gl2d lasso/select:', function() {
     var mockFancy = Lib.extendDeep({}, mock1);
-    var mockFast = Lib.extendDeep({}, mock1, {
-        data: [{mode: 'markers'}],
-        layout: {
-            xaxis: {type: 'linear'},
-            yaxis: {type: 'linear'}
-        }
-    });
+//     var mockFast = Lib.extendDeep({}, mock1, {
+//         data: [{
+//             mode: 'markers'
+//         }],
+//         layout: {
+//             xaxis: {type: 'linear'},
+//             yaxis: {type: 'linear'}
+//         }
+//     });
+
+    var mockDummy = {
+        data: [{
+            type: 'scattergl',
+            mode: 'markers',
+            x: [1, 2, 3],
+            y: [2, 1, 2]
+        }]
+        layout: {}
+    };
 
     var gd;
     var selectPath = [[93, 193], [143, 193]];
@@ -506,7 +518,7 @@ describe('Test gl2d lasso/select:', function() {
     }
 
     it('try', function(done) {
-        var _mock = Lib.extendDeep({}, mock1);
+        var _mock = Lib.extendDeep({}, mockDummy);
 //         _mock.layout.dragmode = 'select';
         gd = createGraphDiv();
 
@@ -520,8 +532,8 @@ describe('Test gl2d lasso/select:', function() {
     });
 
     it('try', function(done) {
-        var _mock = Lib.extendDeep({}, mockFancy);
-//         _mock.layout.dragmode = 'select';
+        var _mock = Lib.extendDeep({}, mockDummy);
+        _mock.layout.dragmode = 'select';
         gd = createGraphDiv();
 
         Plotly.plot(gd, _mock)
