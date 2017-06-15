@@ -499,7 +499,10 @@ describe('Test gl2d lasso/select:', function() {
     }
 
     function countGlObjects() {
-        return gd._fullLayout._plots.xy._scene2d.glplot.objects.length;
+        var scene2d = gd._fullLayout._plots.xy._scene2d || {};
+        var glplot = scene2d || {};
+        var objects = glplot.objects || []
+        return objects.length;
     }
 
     it('should work under fast mode with *select* dragmode', function(done) {
