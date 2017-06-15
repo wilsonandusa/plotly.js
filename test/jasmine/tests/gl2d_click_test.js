@@ -446,8 +446,8 @@ describe('Test hover and click interactions', function() {
 });
 
 fdescribe('Test gl2d lasso/select:', function() {
-    var mockFancy = require('@mocks/gl2d_14.json');
-    var mockFast = Lib.extendDeep({}, mockFancy, {
+    var mockFancy = Lib.extendDeep({}, mock1);
+    var mockFast = Lib.extendDeep({}, mock1, {
         data: [{mode: 'markers'}],
         layout: {
             xaxis: {type: 'linear'},
