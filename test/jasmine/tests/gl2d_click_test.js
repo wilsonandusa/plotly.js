@@ -445,7 +445,7 @@ describe('Test hover and click interactions', function() {
     });
 });
 
-describe('@noCI Test gl2d lasso/select:', function() {
+describe('Test gl2d lasso/select:', function() {
     var mockFancy = Lib.extendDeep({}, mock1);
     var mockFast = Lib.extendDeep({}, mock1, {
         data: [{mode: 'markers'}],
