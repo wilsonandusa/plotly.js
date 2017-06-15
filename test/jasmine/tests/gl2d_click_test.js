@@ -505,6 +505,20 @@ fdescribe('Test gl2d lasso/select:', function() {
         return objects.length;
     }
 
+    fit('try', function(done) {
+        var _mock = Lib.extendDeep({}, mockFast);
+        _mock.layout.dragmode = 'select';
+        gd = createGraphDiv();
+
+        Plotly.plot(gd, _mock)
+        .then(delay(100))
+        .then(function() {
+            expect(countGlObjects()).toBe(1, 'has on gl-scatter2d object');
+        })
+        .catch(fail)
+        .then(done);
+    });
+
     it('should work under fast mode with *select* dragmode', function(done) {
         var _mock = Lib.extendDeep({}, mockFast);
         _mock.layout.dragmode = 'select';
