@@ -463,7 +463,7 @@ describe('Test gl2d lasso/select:', function() {
             mode: 'markers',
             x: [1, 2, 3],
             y: [2, 1, 2]
-        }]
+        }],
         layout: {}
     };
 
